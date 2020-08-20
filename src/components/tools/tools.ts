@@ -39,7 +39,7 @@ export class ToolsComponent extends Vue {
 
     get sampleStyle() {
         return  `background-color: rgb(${this.splashColourSample.r}, ${this.splashColourSample.g}, ${this.splashColourSample.b});`;
-        
+
     }
 
 
@@ -77,7 +77,7 @@ export class ToolsComponent extends Vue {
         //  get pixelArray from imagedata object
         let data = imagedata.data;
 
-        //  image data is array of RGBA values (4 bytes). Pixel sample offset is Y value * width of image, plus X pixels across. 
+        //  image data is array of RGBA values (4 bytes). Pixel sample offset is Y value * width of image, plus X pixels across.
         let i = ((sampleY * imagedata.width) + sampleX) * 4;
 
         //  get RGBA values
@@ -170,7 +170,8 @@ export class ToolsComponent extends Vue {
                     // original height / original width * new width = new height
                     // landscape aspect
 
-                    let maxDimension = fileSpec.height;
+                    // let maxDimension = fileSpec.height;
+                    let maxDimension = fileSpec.width;
                     canvas.width = maxDimension;
                     canvas.height = (srcImage.imgData.height / srcImage.imgData.width) * maxDimension;
 
@@ -178,7 +179,8 @@ export class ToolsComponent extends Vue {
                     // portrait aspect
                     // original width / original height * new height = new width
                     isPortrait = true;
-                    let maxDimension = fileSpec.width;
+                    // let maxDimension = fileSpec.width;
+                    let maxDimension = fileSpec.height;
                     canvas.width = (srcImage.imgData.width / srcImage.imgData.height) * maxDimension;
                     canvas.height = maxDimension;
                 }
@@ -187,10 +189,8 @@ export class ToolsComponent extends Vue {
             const img = new Image();
 
             img.onload = () => {
-
                 // if image has no alpha, fill with background color based on sample
                 console.log(`resizing ${img.width} x ${img.height} to ${fileSpec.width} x ${fileSpec.height}  canvas: ${canvas.width}x${canvas.height}`);
-
                 // FIXME: no idea what this calculation should be (crop from center)
                 if (this.isCropSplashFromCentreMode && bundleSpec.maintainAspectRatio) {
                     // copy source image to a canvas, croppped from centre
@@ -218,7 +218,6 @@ export class ToolsComponent extends Vue {
                     })
                         // this.simpleImageResize(img, canvas)
                         .then((result) => {
-
                             if (bundleSpec.maintainAspectRatio) {
                                 let destCanvas = document.createElement('canvas');
                                 destCanvas.width = fileSpec.width;
@@ -231,13 +230,23 @@ export class ToolsComponent extends Vue {
                                 ctx.fillStyle = 'rgb(' + sample.r + ',' + sample.g + ',' + sample.b + ')';
                                 ctx.fillRect(0, 0, destCanvas.width, destCanvas.height);
                                 // centre destination coord to draw image to
-                                let destx = (destCanvas.width - canvas.width) / 2;
-                                let desty = (destCanvas.height - canvas.height) / 2;
-                                if (destx < 0) destx = 0;
-                                if (desty < 0) desty = 0;
+                                // let destx = (destCanvas.width - canvas.width) / 2;
+                                // let desty = (destCanvas.height - canvas.height) / 2;
+                                // if (destx < 0) destx = 0;
+                                // if (desty < 0) desty = 0;
 
-                                console.log(`fileSpec ${fileSpec.width}x${fileSpec.height} : Src img: ${srcImage.imgData.width}x${srcImage.imgData.height} , Src Canvas ${canvas.width} x ${canvas.height} Dest: ${destCanvas.width} x ${destCanvas.height} destX:${destx}, destY:${desty}`);
-                                ctx.drawImage(canvas, destx, desty);
+                                // console.log(`fileSpec ${fileSpec.width}x${fileSpec.height} : Src img: ${srcImage.imgData.width}x${srcImage.imgData.height} , Src Canvas ${canvas.width} x ${canvas.height} Dest: ${destCanvas.width} x ${destCanvas.height} destX:${destx}, destY:${desty}`);
+                                // ctx.drawImage(canvas, destx, desty);
+
+                                let srcx = (canvas.width - destCanvas.width) / 2;
+                                let srcy = (canvas.height - destCanvas.height) / 2;
+                                if (destCanvas.width > destCanvas.height) { // landscape
+                                  srcx = 0;
+                                } else { // portrait
+                                  srcy = 0;
+                                }
+                                console.log('canvas', canvas.width, canvas.height, destCanvas.width, destCanvas.height);
+                                ctx.drawImage(canvas, srcx, srcy, destCanvas.width, destCanvas.height, 0, 0, destCanvas.width, destCanvas.height);
                                 canvas = destCanvas;
                             }
 
