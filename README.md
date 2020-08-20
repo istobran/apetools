@@ -1,7 +1,7 @@
 # Ape Tools
 
 ## 说明
-从老外那搞来的开源工具，用于生成 app 启动页，自己改过了一下，支持从大图裁切，生成各种尺寸的启动页
+用于生成 app 启动页，自己改过了一下，支持从大图裁切，生成各种尺寸的启动页
 
 ## Tools for app developers
 Live: https://apetools.webprofusion.com
